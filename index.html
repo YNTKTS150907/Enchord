@@ -9,12 +9,25 @@
 <body>
   <div class="form-container">
     <h2>Form Input Siswa</h2>
-    <form action="proses.php" method="POST">
+    <!-- <form action="scripts/php/proses.php" method="POST"> --> <!-- Enable kalo mau pake PHP -->
+      <form action="http://localhost:3000/proses" method="POST"> <!-- Enable kalo mau pake Node.js -->
       <label for="nama">Nama Lengkap</label>
       <input type="text" id="nama" name="nama" placeholder="Masukkan nama..." required>
 
+      <!-- <label for="kelas">Kelas</label>
+      <input type="text" id="kelas" name="kelas" placeholder="Contoh: 11 IPA 1" required> -->
+
       <label for="kelas">Kelas</label>
-      <input type="text" id="kelas" name="kelas" placeholder="Contoh: 11 IPA 1" required>
+      <select id="kelas" name="kelas" required>
+        <option value="" disabled selected hidden>Pilih Kelas</option>
+        <option value="10 IPA 1">10 IPA 1</option>
+        <option value="10 IPA 2">10 IPA 2</option>
+        <option value="11 IPA 1">11 IPA 1</option>
+        <option value="11 IPA 2">11 IPA 2</option>
+        <option value="12 IPA 1">12 IPA 1</option>
+        <option value="12 IPA 2">12 IPA 2</option>
+        <!-- Tambahin kelas lain kalo perlu -->
+      </select>
 
       <input type="submit" value="Kirim Data">
     </form>

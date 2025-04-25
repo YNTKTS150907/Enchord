@@ -1,20 +1,37 @@
 <?php
-$koneksi = new mysqli("localhost", "root", "", "sekolah");
+error_reporting(0); // Nonaktifkan error reporting di production
+header('Content-Type: text/plain; charset=utf-8');
 
-if ($koneksi->connect_error) {
-    die("Koneksi gagal: " . $koneksi->connect_error);
+try {
+    $connection = new mysqli("localhost", "root", "", "sekolah");
+    $connection->set_charset("utf8mb4");
+} catch (Exception $e) {
+    die("Koneksi database gagal: Silakan coba lagi nanti");
 }
 
-$nama = $_POST['nama'];
-$kelas = $_POST['kelas'];
+// Validasi input
+if (empty($_POST['nama']) || empty($_POST['kelas'])) {
+    die("Nama dan kelas harus diisi!");
+}
+// Asli, ga tau gwe ini penyebutannya apa
+$nama = $connection->real_escape_string(htmlspecialchars($_POST['nama'], ENT_QUOTES, 'UTF-8'));// htmlspecialchars untuk Anti-XSS
+$kelas = $connection->real_escape_string(htmlspecialchars($_POST['kelas'], ENT_QUOTES, 'UTF-8'));
 
-$sql = "INSERT INTO siswa (nama, kelas) VALUES ('$nama', '$kelas')";
+// Prepared Statement (anti SQL Injection)
+$stmt = $connection->prepare("INSERT INTO siswa (nama, kelas) VALUES (?, ?)");
+$stmt->bind_param("ss", $nama, $kelas);
 
-if ($koneksi->query($sql) === TRUE) {
-    echo "Data berhasil disimpan!";
+// Execution dengan error handling
+if ($stmt->execute()) {
+    // (anti form resubmission)
+    header("Location: sukses.php?status=berhasil");
+    exit();
 } else {
-    echo "Error: " . $sql . "<br>" . $koneksi->error;
+    error_log("Error database: " . $stmt->error); // Log error tanpa tampilkan ke user
+    die("Terjadi kesalahan saat menyimpan data");
 }
 
-$koneksi->close();
+// Cleanup
+$stmt->close();
+$connection->close();
 ?>
